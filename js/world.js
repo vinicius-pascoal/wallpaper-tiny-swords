@@ -253,9 +253,6 @@
 
         // Services and military buildings occupy the broad middle terrace.
         ['Monastery.png', 585, 555, 192, 320],
-        ['Barracks.png', 955, 665, 192, 256],
-        ['Archery.png', 1215, 675, 192, 256],
-        ['Barracks.png', 1420, 690, 192, 256],
 
         // Houses are kept in small clusters on the lower, safer ground.
         // A few homes extend into the upper clearing, flanked by woodland.
