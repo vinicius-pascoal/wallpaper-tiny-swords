@@ -218,15 +218,26 @@
     createBuildings() {
       const B = 'Buildings/Black Buildings';
       [
+        // The castle is the only unique landmark and anchors the highest tier.
         ['Castle.png', 1000, 365, 320, 256],
-        ['Tower.png', 1305, 445, 128, 256],
-        ['Barracks.png', 1110, 650, 192, 256],
-        ['Archery.png', 1360, 700, 192, 256],
-        ['Monastery.png', 555, 520, 192, 320],
-        ['House1.png', 330, 625, 128, 192],
-        ['House2.png', 485, 705, 128, 192],
-        ['House3.png', 650, 735, 128, 192],
-        ['House1.png', 480, 795, 128, 192]
+        // Towers frame the castle without competing with its silhouette.
+        ['Tower.png', 790, 395, 128, 256],
+        ['Tower.png', 1245, 425, 128, 256],
+
+        // Services and military buildings occupy the broad middle terrace.
+        ['Monastery.png', 585, 555, 192, 320],
+        ['Barracks.png', 955, 665, 192, 256],
+        ['Archery.png', 1215, 675, 192, 256],
+        ['Barracks.png', 1420, 690, 192, 256],
+
+        // Houses are kept in small clusters on the lower, safer ground.
+        ['House1.png', 425, 625, 128, 192],
+        ['House2.png', 555, 685, 128, 192],
+        ['House3.png', 715, 755, 128, 192],
+        ['House1.png', 845, 790, 128, 192],
+        ['House2.png', 1060, 770, 128, 192],
+        ['House3.png', 1205, 790, 128, 192],
+        ['House1.png', 1370, 775, 128, 192]
       ].forEach(([file, x, y, width, height]) => this.addImage(`${B}/${file}`, x, y, width, height));
     }
 
