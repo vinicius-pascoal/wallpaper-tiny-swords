@@ -48,6 +48,7 @@
         tier.ranges.forEach(([from, to], row) => {
           for (let column = from; column <= to; column++) occupied.add(`${column},${row}`);
         });
+        tier.occupied = occupied;
         const has = (column, row) => occupied.has(`${column},${row}`);
         const pickTile = (column, row) => {
           const north = has(column, row - 1);
@@ -105,28 +106,34 @@
       };
       const stairs = { sourceColumn: 0, sourceRow: 3, columns: 3, rows: 3 };
 
-      const addWallRun = (color, x, y, length) => {
+      const addStoneContour = tier => {
         const fragment = document.createDocumentFragment();
-        for (let column = 0; column < length; column++) {
-          const sourceColumn = column === 0 ? 5 : column === length - 1 ? 7 : 6;
+        tier.occupied.forEach(key => {
+          const [column, row] = key.split(',').map(Number);
+          if (tier.occupied.has(`${column},${row + 1}`)) return;
+
+          const hasWest = tier.occupied.has(`${column - 1},${row}`);
+          const hasEast = tier.occupied.has(`${column + 1},${row}`);
+          const sourceColumn = !hasWest ? 5 : !hasEast ? 7 : 6;
           const tile = document.createElement('div');
           tile.className = 'terrain-tile';
-          tile.style.left = `${x + column * atlasSize}px`;
-          tile.style.top = `${y}px`;
-          tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${color}.png`)}")`;
+          tile.style.left = `${tier.left + column * atlasSize}px`;
+          tile.style.top = `${tier.top + (row + 1) * atlasSize}px`;
+          tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${tier.color}.png`)}")`;
           tile.style.backgroundPosition = `${-sourceColumn * atlasSize}px ${-5 * atlasSize}px`;
           fragment.appendChild(tile);
-        }
+        });
         rimLayer.appendChild(fragment);
       };
 
-      // Front edges align with the southern outline of each upper matrix.
-      addWallRun(1, 917, 592, 6);
-      addWallRun(2, 664, 848, 7);
+      // Follow each platform's actual lower contour, including its steps.
+      // Ramps are drawn over the stones, but never remove the level transition.
+      addStoneContour(tiers[2]);
+      addStoneContour(tiers[1]);
 
-      // Two authored stair sections provide readable crossings between levels.
-      addAtlasRegion({ color: 1, x: 662, y: 432, ...stairs });
-      addAtlasRegion({ color: 2, x: 408, y: 630, ...stairs });
+      // The ramps start on the upper surface and cross the complete riser.
+      addAtlasRegion({ color: 1, x: 1237, y: 432, ...stairs });
+      addAtlasRegion({ color: 2, x: 728, y: 688, ...stairs });
       document.getElementById('island').appendChild(rimLayer);
     }
 
@@ -214,11 +221,11 @@
         ['Castle.png', 1000, 365, 320, 256],
         ['Tower.png', 1305, 445, 128, 256],
         ['Barracks.png', 1110, 650, 192, 256],
-        ['Archery.png', 1400, 700, 192, 256],
-        ['Monastery.png', 555, 500, 192, 320],
+        ['Archery.png', 1360, 700, 192, 256],
+        ['Monastery.png', 555, 520, 192, 320],
         ['House1.png', 330, 625, 128, 192],
         ['House2.png', 485, 705, 128, 192],
-        ['House3.png', 700, 745, 128, 192],
+        ['House3.png', 650, 735, 128, 192],
         ['House1.png', 480, 795, 128, 192]
       ].forEach(([file, x, y, width, height]) => this.addImage(`${B}/${file}`, x, y, width, height));
     }
