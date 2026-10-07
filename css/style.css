@@ -1,0 +1,152 @@
+:root {
+  --scene-scale: 1;
+  --beat: 0;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #wallpaper { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+
+body {
+  background: #0d4f6c;
+  cursor: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#wallpaper { position: relative; isolation: isolate; }
+
+#ocean {
+  position: absolute;
+  inset: -64px;
+  background-color: #176783;
+  background-image: url("../assets/Tiny%20Swords%20(Free%20Pack)/Terrain/Tileset/Water%20Background%20color.png");
+  background-size: 64px 64px;
+  animation: water-drift 14s steps(8, end) infinite;
+}
+
+#ocean::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: calc(.12 + var(--beat) * .14);
+  background: repeating-linear-gradient(120deg, transparent 0 55px, rgba(197, 239, 234, .22) 56px 58px, transparent 59px 120px);
+  animation: water-shimmer 7s linear infinite;
+}
+
+#world {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1920px; height: 1080px;
+  transform: translate(-50%, -50%) scale(calc(var(--scene-scale) * var(--audio-scale, 1)));
+  transform-origin: center;
+  will-change: transform;
+}
+
+#island {
+  position: absolute;
+  left: 175px; top: 115px;
+  width: 1570px; height: 865px;
+  z-index: 10;
+  overflow: hidden;
+  clip-path: polygon(11% 11%, 25% 3%, 42% 8%, 56% 2%, 73% 9%, 91% 23%, 97% 43%, 91% 64%, 94% 78%, 80% 93%, 61% 96%, 47% 91%, 32% 98%, 17% 88%, 6% 73%, 10% 58%, 2% 42%);
+  background-color: #87b957;
+  background-image: url("../assets/Tiny%20Swords%20(Free%20Pack)/Terrain/Tileset/Tilemap_color2.png");
+  background-size: 576px 384px;
+  box-shadow: inset 0 0 0 18px rgba(24, 78, 78, .44), 0 12px 0 rgba(12, 60, 77, .38);
+}
+
+#island::before, #island::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  pointer-events: none;
+  border: 11px solid rgba(175, 220, 116, .42);
+  clip-path: inherit;
+}
+
+#island::after {
+  inset: 27px;
+  border-color: rgba(62, 127, 74, .28);
+}
+
+#paths { position: absolute; inset: 0; z-index: 90; pointer-events: none; }
+
+.path {
+  position: absolute;
+  height: 34px;
+  border-radius: 7px;
+  opacity: .68;
+  background: linear-gradient(to bottom, rgba(210, 184, 107, .74), rgba(122, 91, 55, .75));
+  box-shadow: 0 2px 0 rgba(65, 80, 36, .24);
+}
+
+#world-objects, #particles { position: absolute; inset: 0; }
+
+.placed, .npc, .scenery, .ambient-fx {
+  position: absolute;
+  transform-origin: 50% 100%;
+  will-change: transform, background-position;
+  pointer-events: none;
+}
+
+.placed { object-fit: contain; }
+
+.scenery { background-repeat: no-repeat; }
+
+.sprite {
+  width: 100%; height: 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.npc .sprite { transform-origin: 50% 75%; }
+
+.npc.beat-hop .sprite { animation: npc-hop 260ms steps(3, end); }
+
+.ambient-fx.fire { opacity: .85; mix-blend-mode: screen; }
+
+.foam { opacity: .16; mix-blend-mode: screen; }
+
+.heal-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.particle {
+  position: absolute;
+  width: 64px; height: 64px;
+  background-repeat: no-repeat;
+  opacity: 0;
+  will-change: transform, opacity, background-position;
+}
+
+#clouds { position: absolute; inset: 0; z-index: 20; pointer-events: none; overflow: hidden; }
+
+.cloud {
+  position: absolute;
+  width: 576px; height: 256px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: .26;
+  image-rendering: pixelated;
+  will-change: transform;
+}
+
+@keyframes water-drift {
+  from { background-position: 0 0; }
+  to { background-position: 64px 64px; }
+}
+
+@keyframes water-shimmer {
+  from { transform: translate3d(-80px, 24px, 0); }
+  to { transform: translate3d(80px, -24px, 0); }
+}
+
+@keyframes npc-hop {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-7px); }
+}
