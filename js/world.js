@@ -174,7 +174,21 @@
       // Forests frame the south-west work area and the far eastern coast,
       // leaving the homes, mine and military yard readable.
       const trees = [
-        // Dense forest belt on the exposed, lowest terrain only.
+        // Small groves also occupy the upper part of the low tier, leaving
+        // clearings around buildings and the routes between the elevations.
+        [395, 515, 'Tree3.png', 2], [470, 545, 'Tree4.png', 5],
+        [760, 535, 'Tree2.png', 1], [825, 585, 'Tree3.png', 4],
+        [1495, 505, 'Tree1.png', 3], [1585, 535, 'Tree4.png', 0],
+        [1645, 615, 'Tree2.png', 5], [360, 735, 'Tree3.png', 1],
+
+        // Woodland border around the upper clearing marked for expansion.
+        [245, 330, 'Tree3.png', 0], [335, 285, 'Tree4.png', 3],
+        [470, 300, 'Tree2.png', 5], [625, 285, 'Tree3.png', 2],
+        [1325, 290, 'Tree4.png', 1], [1480, 315, 'Tree2.png', 4],
+        [1640, 350, 'Tree3.png', 0], [1710, 430, 'Tree4.png', 3],
+        [285, 440, 'Tree1.png', 2], [370, 455, 'Tree2.png', 5],
+
+        // Dense forest belt on the exposed, lowest terrain.
         [320, 490, 'Tree1.png', 1], [270, 570, 'Tree4.png', 3], [270, 690, 'Tree4.png', 1],
         [380, 780, 'Tree1.png', 0], [505, 845, 'Tree2.png', 2], [640, 895, 'Tree3.png', 4],
         [760, 865, 'Tree4.png', 3], [850, 920, 'Tree1.png', 5], [975, 940, 'Tree2.png', 1],
@@ -194,10 +208,23 @@
         'scenery tree',
         phase
       ));
-      const bushes = [[455, 650], [590, 740], [720, 900], [1450, 720], [1280, 880], [1510, 550], [325, 585]];
+      const bushes = [
+        [430, 585], [520, 475], [730, 610], [850, 520],
+        [1480, 575], [1580, 650], [1660, 520],
+        [280, 380], [445, 350], [650, 360], [1370, 355], [1580, 410],
+        [455, 650], [590, 740], [720, 900], [1450, 720],
+        [1280, 880], [1510, 550], [325, 585]
+      ];
       bushes.forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Bushes/Bushe${index % 4 + 1}.png`, x, y, 128, 128, 8, 3, 15));
-      [[1260, 795, 'Gold Stone 1.png'], [1360, 770, 'Gold Stone 3.png'], [1320, 855, 'Gold Stone 5.png']].forEach(([x, y, file]) => this.addImage(`Terrain/Resources/Gold/Gold Stones/${file}`, x, y, 128, 128, 'scenery', 20));
-      [[790, 790], [1510, 430], [370, 510], [1435, 350]].forEach(([x, y], index) => this.addImage(`Terrain/Decorations/Rocks/Rock${index + 1}.png`, x, y, 64, 64, 'scenery', 10));
+      [
+        [1260, 795, 'Gold Stone 1.png'], [1360, 770, 'Gold Stone 3.png'], [1320, 855, 'Gold Stone 5.png'],
+        [455, 535, 'Gold Stone 2.png'], [1580, 585, 'Gold Stone 4.png'],
+        [300, 390, 'Gold Stone 1.png'], [1570, 390, 'Gold Stone 3.png']
+      ].forEach(([x, y, file]) => this.addImage(`Terrain/Resources/Gold/Gold Stones/${file}`, x, y, 128, 128, 'scenery', 20));
+      [
+        [790, 790], [1510, 430], [370, 510], [1435, 350],
+        [695, 535], [1540, 690], [410, 745]
+      ].forEach(([x, y], index) => this.addImage(`Terrain/Decorations/Rocks/Rock${index % 4 + 1}.png`, x, y, 64, 64, 'scenery', 10));
       [[85, 400], [1815, 660], [1695, 190]].forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Rocks in the Water/Water Rocks_0${index + 1}.png`, x, y, 64, 64, 16, 5, -60));
       this.addImage('Terrain/Resources/Wood/Wood Resource/Wood Resource.png', 350, 750, 64, 64, 'scenery', 31);
       this.addImage('Terrain/Resources/Meat/Meat Resource/Meat Resource.png', 350, 625, 64, 64, 'scenery', 31);
@@ -231,6 +258,13 @@
         ['Barracks.png', 1420, 690, 192, 256],
 
         // Houses are kept in small clusters on the lower, safer ground.
+        // A few homes extend into the upper clearing, flanked by woodland.
+        ['House2.png', 430, 430, 128, 192],
+        ['House3.png', 610, 420, 128, 192],
+        ['House1.png', 1400, 445, 128, 192],
+        ['House2.png', 1550, 485, 128, 192],
+
+        // Lower residential clusters.
         ['House1.png', 425, 625, 128, 192],
         ['House2.png', 555, 685, 128, 192],
         ['House3.png', 715, 755, 128, 192],
