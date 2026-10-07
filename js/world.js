@@ -116,8 +116,15 @@
     }
 
     createScenery() {
-      const trees = [[430, 820, 'Tree1.png'], [530, 870, 'Tree2.png'], [680, 860, 'Tree3.png'], [350, 730, 'Tree4.png'], [1480, 795, 'Tree1.png'], [1375, 850, 'Tree2.png'], [1540, 690, 'Tree3.png']];
-      trees.forEach(([x, y, file]) => this.addAnimated(`Terrain/Resources/Wood/Trees/${file}`, x, y, 256, /Tree[12]/.test(file) ? 256 : 192, 6, 4, 18));
+      // Forests frame the south-west work area and the far eastern coast,
+      // leaving the homes, paths, mine and military yard readable.
+      const trees = [
+        [500, 780, 'Tree4.png', 1], [560, 835, 'Tree1.png', 0], [640, 875, 'Tree2.png', 2],
+        [740, 890, 'Tree3.png', 4], [820, 850, 'Tree4.png', 3],
+        [1260, 800, 'Tree1.png', 3], [1370, 740, 'Tree3.png', 2], [1200, 850, 'Tree2.png', 5],
+        [1360, 700, 'Tree4.png', 0]
+      ];
+      trees.forEach(([x, y, file, frame]) => this.addStaticTree(x, y, file, frame));
       const bushes = [[455, 650], [590, 740], [720, 900], [1450, 720], [1280, 880], [1510, 550], [325, 585]];
       bushes.forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Bushes/Bushe${index % 4 + 1}.png`, x, y, 128, 128, 8, 3, 15));
       [[1260, 840, 'Gold Stone 1.png'], [1335, 815, 'Gold Stone 3.png'], [1200, 865, 'Gold Stone 5.png']].forEach(([x, y, file]) => this.addImage(`Terrain/Resources/Gold/Gold Stones/${file}`, x, y, 128, 128, 'scenery', 20));
@@ -137,6 +144,21 @@
       this.objects.appendChild(element);
       const animator = new SpriteAnimator(element, { url: A('Particle FX/Fire_01.png'), frame: 64, frames: 8, fps: 8 });
       this.animators.push(animator);
+    }
+
+    addStaticTree(x, groundY, file, frame) {
+      const frameWidth = 256;
+      const frameHeight = /Tree[12]/.test(file) ? 256 : 192;
+      const tree = document.createElement('div');
+      tree.className = 'scenery';
+      tree.style.width = `${frameWidth}px`;
+      tree.style.height = `${frameHeight}px`;
+      tree.style.transform = `translate3d(${x - frameWidth / 2}px, ${groundY - frameHeight}px, 0)`;
+      tree.style.zIndex = `${100 + Math.floor(groundY) + 18}`;
+      tree.style.backgroundImage = `url("${A(`Terrain/Resources/Wood/Trees/${file}`)}")`;
+      tree.style.backgroundSize = `${frameWidth * 6}px ${frameHeight}px`;
+      tree.style.backgroundPosition = `${-frame * frameWidth}px 0`;
+      this.objects.appendChild(tree);
     }
 
     createBuildings() {
