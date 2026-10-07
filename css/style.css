@@ -51,7 +51,7 @@ body {
   overflow: visible;
 }
 
-#terrain-tiles {
+.terrain-tier {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -64,17 +64,6 @@ body {
   background-repeat: no-repeat;
   background-size: 576px 384px;
   image-rendering: pixelated;
-}
-
-#paths { position: absolute; inset: 0; z-index: 90; pointer-events: none; }
-
-.path {
-  position: absolute;
-  height: 34px;
-  border-radius: 7px;
-  opacity: .68;
-  background: linear-gradient(to bottom, rgba(210, 184, 107, .74), rgba(122, 91, 55, .75));
-  box-shadow: 0 2px 0 rgba(65, 80, 36, .24);
 }
 
 #world-objects, #particles { position: absolute; inset: 0; }

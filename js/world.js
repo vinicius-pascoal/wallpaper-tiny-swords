@@ -10,7 +10,6 @@
       this.animators = [];
       this.clouds = [];
       this.createTerrain();
-      this.createPaths();
       this.createFoam();
       this.createScenery();
       this.createBuildings();
@@ -20,51 +19,115 @@
 
     createTerrain() {
       const atlasSize = 64;
-      const atlas = {
+      const lowFloorAtlas = {
         center: [1, 1], north: [1, 0], south: [1, 2], west: [0, 1], east: [2, 1],
         northWest: [0, 0], northEast: [2, 0], southWest: [0, 2], southEast: [2, 2]
       };
-      // Each row is an explicit, deterministic tile range. Null cells remain ocean.
-      const ranges = [[6, 15], [3, 18], [2, 19], [1, 20], [0, 21], [0, 21], [0, 21], [0, 21], [1, 20], [2, 19], [3, 18], [5, 16]];
-      const occupied = new Set();
-      ranges.forEach(([from, to], row) => {
-        for (let column = from; column <= to; column++) occupied.add(`${column},${row}`);
-      });
-      const has = (column, row) => occupied.has(`${column},${row}`);
-      const pickTile = (column, row) => {
-        const north = has(column, row - 1);
-        const south = has(column, row + 1);
-        const west = has(column - 1, row);
-        const east = has(column + 1, row);
-        if (!north && !west) return atlas.northWest;
-        if (!north && !east) return atlas.northEast;
-        if (!south && !west) return atlas.southWest;
-        if (!south && !east) return atlas.southEast;
-        if (!north) return atlas.north;
-        if (!south) return atlas.south;
-        if (!west) return atlas.west;
-        if (!east) return atlas.east;
-        return atlas.center;
+      // The red-marked group on the right is the authored upper-ground floor.
+      const upperFloorAtlas = {
+        center: [6, 1], north: [6, 0], south: [6, 2], west: [5, 1], east: [7, 1],
+        northWest: [5, 0], northEast: [7, 0], southWest: [5, 2], southEast: [7, 2]
       };
-      const terrainLayer = document.createElement('div');
-      terrainLayer.id = 'terrain-tiles';
-      const layer = document.createDocumentFragment();
-      occupied.forEach(key => {
-        const [column, row] = key.split(',').map(Number);
-        const [atlasColumn, atlasRow] = pickTile(column, row);
-        const tile = document.createElement('div');
-        tile.className = 'terrain-tile';
-        // color2 is the green biome used by the Black kingdom. The other atlas
-        // colors are separate biome palettes, not interchangeable grass noise.
-        const color = 2;
-        tile.style.left = `${82 + column * atlasSize}px`;
-        tile.style.top = `${38 + row * atlasSize}px`;
-        tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${color}.png`)}")`;
-        tile.style.backgroundPosition = `${-atlasColumn * atlasSize}px ${-atlasRow * atlasSize}px`;
-        layer.appendChild(tile);
+      const tiers = [
+        {
+          name: 'low', color: 3, floorAtlas: lowFloorAtlas, left: 82, top: 38,
+          ranges: [[6, 15], [3, 18], [2, 19], [1, 20], [0, 21], [0, 21], [0, 21], [0, 21], [1, 20], [2, 19], [3, 18], [5, 16]]
+        },
+        {
+          name: 'middle', color: 2, floorAtlas: upperFloorAtlas, left: 258, top: 172,
+          ranges: [[4, 10], [2, 12], [1, 13], [0, 14], [0, 14], [0, 14], [1, 13], [2, 12], [4, 10]]
+        },
+        {
+          name: 'high', color: 1, floorAtlas: upperFloorAtlas, left: 575, top: 108,
+          ranges: [[3, 8], [1, 10], [0, 11], [0, 11], [1, 10], [3, 8]]
+        }
+      ];
+
+      tiers.forEach((tier, tierIndex) => {
+        const occupied = new Set();
+        tier.ranges.forEach(([from, to], row) => {
+          for (let column = from; column <= to; column++) occupied.add(`${column},${row}`);
+        });
+        const has = (column, row) => occupied.has(`${column},${row}`);
+        const pickTile = (column, row) => {
+          const north = has(column, row - 1);
+          const south = has(column, row + 1);
+          const west = has(column - 1, row);
+          const east = has(column + 1, row);
+          if (!north && !west) return tier.floorAtlas.northWest;
+          if (!north && !east) return tier.floorAtlas.northEast;
+          if (!south && !west) return tier.floorAtlas.southWest;
+          if (!south && !east) return tier.floorAtlas.southEast;
+          if (!north) return tier.floorAtlas.north;
+          if (!south) return tier.floorAtlas.south;
+          if (!west) return tier.floorAtlas.west;
+          if (!east) return tier.floorAtlas.east;
+          return tier.floorAtlas.center;
+        };
+        const layer = document.createElement('div');
+        layer.className = `terrain-tier terrain-tier--${tier.name}`;
+        layer.style.zIndex = `${tierIndex}`;
+        const fragment = document.createDocumentFragment();
+        occupied.forEach(key => {
+          const [column, row] = key.split(',').map(Number);
+          const [atlasColumn, atlasRow] = pickTile(column, row);
+          const tile = document.createElement('div');
+          tile.className = 'terrain-tile';
+          tile.style.left = `${tier.left + column * atlasSize}px`;
+          tile.style.top = `${tier.top + row * atlasSize}px`;
+          tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${tier.color}.png`)}")`;
+          tile.style.backgroundPosition = `${-atlasColumn * atlasSize}px ${-atlasRow * atlasSize}px`;
+          fragment.appendChild(tile);
+        });
+        layer.appendChild(fragment);
+        document.getElementById('island').appendChild(layer);
       });
-      terrainLayer.appendChild(layer);
-      document.getElementById('island').appendChild(terrainLayer);
+
+      // The blue-marked stone row is used only as the front edge of each rise.
+      // The authored stair/ramp block from the left connects the elevations.
+      const rimLayer = document.createElement('div');
+      rimLayer.className = 'terrain-tier terrain-tier--rims';
+      rimLayer.style.zIndex = '3';
+      const addAtlasRegion = ({ color, x, y, sourceColumn, sourceRow, columns, rows }) => {
+        const fragment = document.createDocumentFragment();
+        for (let row = 0; row < rows; row++) {
+          for (let column = 0; column < columns; column++) {
+            const tile = document.createElement('div');
+            tile.className = 'terrain-tile';
+            tile.style.left = `${x + column * atlasSize}px`;
+            tile.style.top = `${y + row * atlasSize}px`;
+            tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${color}.png`)}")`;
+            tile.style.backgroundPosition = `${-(sourceColumn + column) * atlasSize}px ${-(sourceRow + row) * atlasSize}px`;
+            fragment.appendChild(tile);
+          }
+        }
+        rimLayer.appendChild(fragment);
+      };
+      const stairs = { sourceColumn: 0, sourceRow: 3, columns: 3, rows: 3 };
+
+      const addWallRun = (color, x, y, length) => {
+        const fragment = document.createDocumentFragment();
+        for (let column = 0; column < length; column++) {
+          const sourceColumn = column === 0 ? 5 : column === length - 1 ? 7 : 6;
+          const tile = document.createElement('div');
+          tile.className = 'terrain-tile';
+          tile.style.left = `${x + column * atlasSize}px`;
+          tile.style.top = `${y}px`;
+          tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${color}.png`)}")`;
+          tile.style.backgroundPosition = `${-sourceColumn * atlasSize}px ${-5 * atlasSize}px`;
+          fragment.appendChild(tile);
+        }
+        rimLayer.appendChild(fragment);
+      };
+
+      // Front edges align with the southern outline of each upper matrix.
+      addWallRun(1, 767, 492, 6);
+      addWallRun(2, 514, 748, 7);
+
+      // Two authored stair sections provide readable crossings between levels.
+      addAtlasRegion({ color: 1, x: 512, y: 332, ...stairs });
+      addAtlasRegion({ color: 2, x: 258, y: 530, ...stairs });
+      document.getElementById('island').appendChild(rimLayer);
     }
 
     addImage(path, x, groundY, width, height, className = 'placed', zOffset = 0) {
@@ -93,23 +156,6 @@
       return element;
     }
 
-    createPaths() {
-      const paths = [
-        [760, 630, 430, 26], [920, 500, 450, 62], [1070, 670, 455, -28],
-        [835, 735, 320, -55], [1135, 760, 350, 54], [740, 490, 315, -72]
-      ];
-      const layer = document.getElementById('paths');
-      paths.forEach(([x, y, width, rotate]) => {
-        const path = document.createElement('div');
-        path.className = 'path';
-        path.style.width = `${width}px`;
-        path.style.left = `${x}px`;
-        path.style.top = `${y}px`;
-        path.style.transform = `rotate(${rotate}deg)`;
-        layer.appendChild(path);
-      });
-    }
-
     createFoam() {
       const foam = [[355, 310], [620, 170], [1080, 150], [1480, 300], [1590, 630], [1280, 900], [800, 915], [390, 700]];
       foam.forEach(([x, y]) => this.addAnimated('Terrain/Tileset/Water Foam.png', x, y, 192, 192, 16, 6, -70, 'scenery foam'));
@@ -117,7 +163,7 @@
 
     createScenery() {
       // Forests frame the south-west work area and the far eastern coast,
-      // leaving the homes, paths, mine and military yard readable.
+      // leaving the homes, mine and military yard readable.
       const trees = [
         [500, 780, 'Tree4.png', 1], [560, 835, 'Tree1.png', 0], [640, 875, 'Tree2.png', 2],
         [740, 890, 'Tree3.png', 4], [820, 850, 'Tree4.png', 3],
