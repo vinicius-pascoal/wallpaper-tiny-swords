@@ -9,12 +9,62 @@
       this.npcs = [];
       this.animators = [];
       this.clouds = [];
+      this.createTerrain();
       this.createPaths();
       this.createFoam();
       this.createScenery();
       this.createBuildings();
       this.createClouds();
       this.createPopulation();
+    }
+
+    createTerrain() {
+      const atlasSize = 64;
+      const atlas = {
+        center: [1, 1], north: [1, 0], south: [1, 2], west: [0, 1], east: [2, 1],
+        northWest: [0, 0], northEast: [2, 0], southWest: [0, 2], southEast: [2, 2]
+      };
+      // Each row is an explicit, deterministic tile range. Null cells remain ocean.
+      const ranges = [[6, 15], [3, 18], [2, 19], [1, 20], [0, 21], [0, 21], [0, 21], [0, 21], [1, 20], [2, 19], [3, 18], [5, 16]];
+      const occupied = new Set();
+      ranges.forEach(([from, to], row) => {
+        for (let column = from; column <= to; column++) occupied.add(`${column},${row}`);
+      });
+      const has = (column, row) => occupied.has(`${column},${row}`);
+      const pickTile = (column, row) => {
+        const north = has(column, row - 1);
+        const south = has(column, row + 1);
+        const west = has(column - 1, row);
+        const east = has(column + 1, row);
+        if (!north && !west) return atlas.northWest;
+        if (!north && !east) return atlas.northEast;
+        if (!south && !west) return atlas.southWest;
+        if (!south && !east) return atlas.southEast;
+        if (!north) return atlas.north;
+        if (!south) return atlas.south;
+        if (!west) return atlas.west;
+        if (!east) return atlas.east;
+        return atlas.center;
+      };
+      const terrainLayer = document.createElement('div');
+      terrainLayer.id = 'terrain-tiles';
+      const layer = document.createDocumentFragment();
+      occupied.forEach(key => {
+        const [column, row] = key.split(',').map(Number);
+        const [atlasColumn, atlasRow] = pickTile(column, row);
+        const tile = document.createElement('div');
+        tile.className = 'terrain-tile';
+        // color2 is the green biome used by the Black kingdom. The other atlas
+        // colors are separate biome palettes, not interchangeable grass noise.
+        const color = 2;
+        tile.style.left = `${82 + column * atlasSize}px`;
+        tile.style.top = `${38 + row * atlasSize}px`;
+        tile.style.backgroundImage = `url("${A(`Terrain/Tileset/Tilemap_color${color}.png`)}")`;
+        tile.style.backgroundPosition = `${-atlasColumn * atlasSize}px ${-atlasRow * atlasSize}px`;
+        layer.appendChild(tile);
+      });
+      terrainLayer.appendChild(layer);
+      document.getElementById('island').appendChild(terrainLayer);
     }
 
     addImage(path, x, groundY, width, height, className = 'placed', zOffset = 0) {

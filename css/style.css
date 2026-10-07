@@ -48,26 +48,22 @@ body {
   left: 175px; top: 115px;
   width: 1570px; height: 865px;
   z-index: 10;
-  overflow: hidden;
-  clip-path: polygon(11% 11%, 25% 3%, 42% 8%, 56% 2%, 73% 9%, 91% 23%, 97% 43%, 91% 64%, 94% 78%, 80% 93%, 61% 96%, 47% 91%, 32% 98%, 17% 88%, 6% 73%, 10% 58%, 2% 42%);
-  background-color: #87b957;
-  background-image: url("../assets/Tiny%20Swords%20(Free%20Pack)/Terrain/Tileset/Tilemap_color2.png");
-  background-size: 576px 384px;
-  box-shadow: inset 0 0 0 18px rgba(24, 78, 78, .44), 0 12px 0 rgba(12, 60, 77, .38);
+  overflow: visible;
 }
 
-#island::before, #island::after {
-  content: "";
+#terrain-tiles {
   position: absolute;
-  inset: 9px;
+  inset: 0;
   pointer-events: none;
-  border: 11px solid rgba(175, 220, 116, .42);
-  clip-path: inherit;
 }
 
-#island::after {
-  inset: 27px;
-  border-color: rgba(62, 127, 74, .28);
+.terrain-tile {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  background-repeat: no-repeat;
+  background-size: 576px 384px;
+  image-rendering: pixelated;
 }
 
 #paths { position: absolute; inset: 0; z-index: 90; pointer-events: none; }
