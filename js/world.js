@@ -144,7 +144,7 @@
       return image;
     }
 
-    addAnimated(path, x, groundY, frameWidth, frameHeight, frames, fps, zOffset = 0, className = 'scenery') {
+    addAnimated(path, x, groundY, frameWidth, frameHeight, frames, fps, zOffset = 0, className = 'scenery', startFrame = 0) {
       const element = document.createElement('div');
       element.className = className;
       element.style.transform = `translate3d(${x - frameWidth / 2}px, ${groundY - frameHeight}px, 0)`;
@@ -152,6 +152,8 @@
       this.objects.appendChild(element);
       const animation = { url: A(path), frameWidth, frameHeight, frames, fps };
       const animator = new SpriteAnimator(element, animation);
+      animator.frame = startFrame % frames;
+      animator.render();
       this.animators.push(animator);
       return element;
     }
@@ -165,11 +167,26 @@
       // Forests frame the south-west work area and the far eastern coast,
       // leaving the homes, mine and military yard readable.
       const trees = [
-        [270, 690, 'Tree4.png', 1], [380, 780, 'Tree1.png', 0], [505, 845, 'Tree2.png', 2],
-        [640, 895, 'Tree3.png', 4], [760, 865, 'Tree4.png', 3],
+        // Dense forest belt on the exposed, lowest terrain only.
+        [320, 490, 'Tree1.png', 1], [270, 570, 'Tree4.png', 3], [270, 690, 'Tree4.png', 1],
+        [380, 780, 'Tree1.png', 0], [505, 845, 'Tree2.png', 2], [640, 895, 'Tree3.png', 4],
+        [760, 865, 'Tree4.png', 3], [850, 920, 'Tree1.png', 5], [975, 940, 'Tree2.png', 1],
+        [1100, 920, 'Tree3.png', 0], [1390, 890, 'Tree4.png', 4], [1500, 820, 'Tree2.png', 3],
+        [1660, 720, 'Tree1.png', 2], [1720, 640, 'Tree3.png', 5], [1670, 560, 'Tree4.png', 0],
         [1570, 680, 'Tree1.png', 3], [1530, 770, 'Tree3.png', 2], [1435, 845, 'Tree2.png', 5]
       ];
-      trees.forEach(([x, y, file, frame]) => this.addStaticTree(x, y, file, frame));
+      trees.forEach(([x, y, file, phase]) => this.addAnimated(
+        `Terrain/Resources/Wood/Trees/${file}`,
+        x,
+        y,
+        192,
+        /Tree[12]/.test(file) ? 256 : 192,
+        8,
+        4,
+        18,
+        'scenery tree',
+        phase
+      ));
       const bushes = [[455, 650], [590, 740], [720, 900], [1450, 720], [1280, 880], [1510, 550], [325, 585]];
       bushes.forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Bushes/Bushe${index % 4 + 1}.png`, x, y, 128, 128, 8, 3, 15));
       [[1260, 795, 'Gold Stone 1.png'], [1360, 770, 'Gold Stone 3.png'], [1320, 855, 'Gold Stone 5.png']].forEach(([x, y, file]) => this.addImage(`Terrain/Resources/Gold/Gold Stones/${file}`, x, y, 128, 128, 'scenery', 20));
@@ -189,21 +206,6 @@
       this.objects.appendChild(element);
       const animator = new SpriteAnimator(element, { url: A('Particle FX/Fire_01.png'), frame: 64, frames: 8, fps: 8 });
       this.animators.push(animator);
-    }
-
-    addStaticTree(x, groundY, file, frame) {
-      const frameWidth = 256;
-      const frameHeight = /Tree[12]/.test(file) ? 256 : 192;
-      const tree = document.createElement('div');
-      tree.className = 'scenery';
-      tree.style.width = `${frameWidth}px`;
-      tree.style.height = `${frameHeight}px`;
-      tree.style.transform = `translate3d(${x - frameWidth / 2}px, ${groundY - frameHeight}px, 0)`;
-      tree.style.zIndex = `${100 + Math.floor(groundY) + 18}`;
-      tree.style.backgroundImage = `url("${A(`Terrain/Resources/Wood/Trees/${file}`)}")`;
-      tree.style.backgroundSize = `${frameWidth * 6}px ${frameHeight}px`;
-      tree.style.backgroundPosition = `${-frame * frameWidth}px 0`;
-      this.objects.appendChild(tree);
     }
 
     createBuildings() {
