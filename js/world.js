@@ -30,15 +30,15 @@
       };
       const tiers = [
         {
-          name: 'low', color: 3, floorAtlas: lowFloorAtlas, left: 82, top: 38,
-          ranges: [[6, 15], [3, 18], [2, 19], [1, 20], [0, 21], [0, 21], [0, 21], [0, 21], [1, 20], [2, 19], [3, 18], [5, 16]]
+          name: 'low', color: 3, floorAtlas: lowFloorAtlas, left: 65, top: 35,
+          ranges: [[9, 17], [6, 21], [3, 24], [1, 26], [0, 26], [0, 25], [0, 26], [0, 26], [0, 25], [0, 26], [1, 26], [2, 24], [4, 22], [7, 20], [10, 17]]
         },
         {
-          name: 'middle', color: 2, floorAtlas: upperFloorAtlas, left: 258, top: 172,
+          name: 'middle', color: 2, floorAtlas: upperFloorAtlas, left: 408, top: 272,
           ranges: [[4, 10], [2, 12], [1, 13], [0, 14], [0, 14], [0, 14], [1, 13], [2, 12], [4, 10]]
         },
         {
-          name: 'high', color: 1, floorAtlas: upperFloorAtlas, left: 575, top: 108,
+          name: 'high', color: 1, floorAtlas: upperFloorAtlas, left: 725, top: 208,
           ranges: [[3, 8], [1, 10], [0, 11], [0, 11], [1, 10], [3, 8]]
         }
       ];
@@ -121,12 +121,12 @@
       };
 
       // Front edges align with the southern outline of each upper matrix.
-      addWallRun(1, 767, 492, 6);
-      addWallRun(2, 514, 748, 7);
+      addWallRun(1, 917, 592, 6);
+      addWallRun(2, 664, 848, 7);
 
       // Two authored stair sections provide readable crossings between levels.
-      addAtlasRegion({ color: 1, x: 512, y: 332, ...stairs });
-      addAtlasRegion({ color: 2, x: 258, y: 530, ...stairs });
+      addAtlasRegion({ color: 1, x: 662, y: 432, ...stairs });
+      addAtlasRegion({ color: 2, x: 408, y: 630, ...stairs });
       document.getElementById('island').appendChild(rimLayer);
     }
 
@@ -157,7 +157,7 @@
     }
 
     createFoam() {
-      const foam = [[355, 310], [620, 170], [1080, 150], [1480, 300], [1590, 630], [1280, 900], [800, 915], [390, 700]];
+      const foam = [[210, 330], [610, 90], [1140, 65], [1640, 250], [1775, 610], [1510, 890], [980, 975], [340, 845]];
       foam.forEach(([x, y]) => this.addAnimated('Terrain/Tileset/Water Foam.png', x, y, 192, 192, 16, 6, -70, 'scenery foam'));
     }
 
@@ -165,21 +165,20 @@
       // Forests frame the south-west work area and the far eastern coast,
       // leaving the homes, mine and military yard readable.
       const trees = [
-        [500, 780, 'Tree4.png', 1], [560, 835, 'Tree1.png', 0], [640, 875, 'Tree2.png', 2],
-        [740, 890, 'Tree3.png', 4], [820, 850, 'Tree4.png', 3],
-        [1260, 800, 'Tree1.png', 3], [1370, 740, 'Tree3.png', 2], [1200, 850, 'Tree2.png', 5],
-        [1360, 700, 'Tree4.png', 0]
+        [270, 690, 'Tree4.png', 1], [380, 780, 'Tree1.png', 0], [505, 845, 'Tree2.png', 2],
+        [640, 895, 'Tree3.png', 4], [760, 865, 'Tree4.png', 3],
+        [1570, 680, 'Tree1.png', 3], [1530, 770, 'Tree3.png', 2], [1435, 845, 'Tree2.png', 5]
       ];
       trees.forEach(([x, y, file, frame]) => this.addStaticTree(x, y, file, frame));
       const bushes = [[455, 650], [590, 740], [720, 900], [1450, 720], [1280, 880], [1510, 550], [325, 585]];
       bushes.forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Bushes/Bushe${index % 4 + 1}.png`, x, y, 128, 128, 8, 3, 15));
-      [[1260, 840, 'Gold Stone 1.png'], [1335, 815, 'Gold Stone 3.png'], [1200, 865, 'Gold Stone 5.png']].forEach(([x, y, file]) => this.addImage(`Terrain/Resources/Gold/Gold Stones/${file}`, x, y, 128, 128, 'scenery', 20));
+      [[1260, 795, 'Gold Stone 1.png'], [1360, 770, 'Gold Stone 3.png'], [1320, 855, 'Gold Stone 5.png']].forEach(([x, y, file]) => this.addImage(`Terrain/Resources/Gold/Gold Stones/${file}`, x, y, 128, 128, 'scenery', 20));
       [[790, 790], [1510, 430], [370, 510], [1435, 350]].forEach(([x, y], index) => this.addImage(`Terrain/Decorations/Rocks/Rock${index + 1}.png`, x, y, 64, 64, 'scenery', 10));
-      [[210, 380], [1700, 720], [1540, 220]].forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Rocks in the Water/Water Rocks_0${index + 1}.png`, x, y, 64, 64, 16, 5, -60));
-      this.addImage('Terrain/Resources/Wood/Wood Resource/Wood Resource.png', 560, 780, 64, 64, 'scenery', 31);
-      this.addImage('Terrain/Resources/Meat/Meat Resource/Meat Resource.png', 500, 610, 64, 64, 'scenery', 31);
-      this.addFire(1195, 575);
-      this.addFire(760, 555);
+      [[85, 400], [1815, 660], [1695, 190]].forEach(([x, y], index) => this.addAnimated(`Terrain/Decorations/Rocks in the Water/Water Rocks_0${index + 1}.png`, x, y, 64, 64, 16, 5, -60));
+      this.addImage('Terrain/Resources/Wood/Wood Resource/Wood Resource.png', 350, 750, 64, 64, 'scenery', 31);
+      this.addImage('Terrain/Resources/Meat/Meat Resource/Meat Resource.png', 350, 625, 64, 64, 'scenery', 31);
+      this.addFire(1080, 560);
+      this.addFire(690, 600);
     }
 
     addFire(x, y) {
@@ -210,15 +209,15 @@
     createBuildings() {
       const B = 'Buildings/Black Buildings';
       [
-        ['Castle.png', 985, 385, 320, 256],
-        ['Tower.png', 1325, 475, 128, 256],
-        ['Barracks.png', 1200, 650, 192, 256],
-        ['Archery.png', 1420, 690, 192, 256],
-        ['Monastery.png', 620, 510, 192, 320],
-        ['House1.png', 460, 630, 128, 192],
-        ['House2.png', 630, 690, 128, 192],
-        ['House3.png', 760, 620, 128, 192],
-        ['House1.png', 545, 725, 128, 192]
+        ['Castle.png', 1000, 365, 320, 256],
+        ['Tower.png', 1305, 445, 128, 256],
+        ['Barracks.png', 1110, 650, 192, 256],
+        ['Archery.png', 1400, 700, 192, 256],
+        ['Monastery.png', 555, 500, 192, 320],
+        ['House1.png', 330, 625, 128, 192],
+        ['House2.png', 485, 705, 128, 192],
+        ['House3.png', 700, 745, 128, 192],
+        ['House1.png', 480, 795, 128, 192]
       ].forEach(([file, x, y, width, height]) => this.addImage(`${B}/${file}`, x, y, width, height));
     }
 

@@ -45,8 +45,8 @@ body {
 
 #island {
   position: absolute;
-  left: 175px; top: 115px;
-  width: 1570px; height: 865px;
+  left: 25px; top: 15px;
+  width: 1870px; height: 1050px;
   z-index: 10;
   overflow: visible;
 }
