@@ -31,15 +31,17 @@
       const tiers = [
         {
           name: 'low', color: 3, floorAtlas: lowFloorAtlas, left: 65, top: 35,
-          ranges: [[9, 17], [6, 21], [3, 24], [1, 26], [0, 26], [0, 25], [0, 26], [0, 26], [0, 25], [0, 26], [1, 26], [2, 24], [4, 22], [7, 20], [10, 17]]
+          // A broad, asymmetric shoreline keeps the island organic instead
+          // of producing a staircase or a narrow neck at the top.
+          ranges: [[7, 19], [4, 22], [2, 24], [1, 26], [0, 27], [0, 27], [0, 27], [0, 27], [0, 27], [1, 26], [2, 25], [3, 24], [5, 22], [8, 19], [11, 16]]
         },
         {
-          name: 'middle', color: 2, floorAtlas: upperFloorAtlas, left: 408, top: 272,
-          ranges: [[4, 10], [2, 12], [1, 13], [0, 14], [0, 14], [0, 14], [1, 13], [2, 12], [4, 10]]
+          name: 'middle', color: 2, floorAtlas: upperFloorAtlas, left: 360, top: 272,
+          ranges: [[3, 11], [1, 13], [0, 14], [0, 14], [0, 14], [0, 14], [1, 13], [2, 12], [4, 10]]
         },
         {
-          name: 'high', color: 1, floorAtlas: upperFloorAtlas, left: 725, top: 208,
-          ranges: [[3, 8], [1, 10], [0, 11], [0, 11], [1, 10], [3, 8]]
+          name: 'high', color: 1, floorAtlas: upperFloorAtlas, left: 576, top: 208,
+          ranges: [[2, 9], [1, 10], [0, 11], [0, 11], [0, 11], [1, 10], [2, 9]]
         }
       ];
 

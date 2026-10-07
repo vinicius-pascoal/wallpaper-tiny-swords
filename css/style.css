@@ -66,7 +66,9 @@ body {
   image-rendering: pixelated;
 }
 
-#world-objects, #particles { position: absolute; inset: 0; }
+#world-objects { position: absolute; inset: 0; z-index: 11; }
+
+#particles { position: absolute; inset: 0; z-index: 12; }
 
 .placed, .npc, .scenery, .ambient-fx {
   position: absolute;
